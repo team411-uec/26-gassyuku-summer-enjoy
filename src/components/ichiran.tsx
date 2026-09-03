@@ -1,22 +1,17 @@
-import { TaskList } from "./TaskList"
-import type { Task } from "../types"
+import { TaskList } from "./TaskList";
+import type { Task } from "../types";
 
 interface IchiranProps {
-  tasks: Task[]
-  onToggle: (id: string, completed: boolean) => void
-  onEdit: (task: Task) => void
-  onOpenTaskForm: () => void
+  tasks: Task[];
+  onToggle: (id: string, completed: boolean) => void;
+  onEdit: (task: Task) => void;
+  onOpenTaskForm: () => void;
 }
 
 const stickerShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
-export function Ichiran({
-  tasks,
-  onToggle,
-  onEdit,
-  onOpenTaskForm,
-}: IchiranProps) {
+export function Ichiran({ tasks, onToggle, onEdit, onOpenTaskForm }: IchiranProps) {
   return (
     <main className="min-h-screen bg-[#eaf7fb] px-3 py-6 text-left sm:px-6">
       <div className="mx-auto max-w-3xl overflow-hidden bg-[#fffaf3] shadow-2xl">
@@ -46,8 +41,7 @@ export function Ichiran({
             <div
               className="relative flex min-h-28 items-center bg-[#5798d9] px-5 pr-32 shadow-lg sm:min-h-36 sm:px-8 sm:pr-44"
               style={{
-                clipPath:
-                  "polygon(0 0, 100% 0, 91% 50%, 100% 100%, 0 100%)",
+                clipPath: "polygon(0 0, 100% 0, 91% 50%, 100% 100%, 0 100%)",
               }}
             >
               <div>
@@ -80,8 +74,7 @@ export function Ichiran({
             <div
               className="absolute right-5 top-1/2 z-10 h-28 w-28 -translate-y-1/2 rotate-6 sm:right-9 sm:h-36 sm:w-36"
               style={{
-                filter:
-                  "drop-shadow(4px 7px 5px rgba(45,70,90,0.28))",
+                filter: "drop-shadow(4px 7px 5px rgba(45,70,90,0.28))",
               }}
             >
               <div
@@ -184,9 +177,7 @@ export function Ichiran({
                     ISSUE A NEW TICKET
                   </span>
 
-                  <span className="block text-base font-black">
-                    新しい夏を追加
-                  </span>
+                  <span className="block text-base font-black">新しい夏を追加</span>
                 </span>
               </span>
             </button>
@@ -196,5 +187,5 @@ export function Ichiran({
         </section>
       </div>
     </main>
-  )
+  );
 }

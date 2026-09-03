@@ -60,8 +60,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
         <div
           className="flex min-h-12 items-center justify-center bg-[#579bd9] px-12"
           style={{
-            clipPath:
-              "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
+            clipPath: "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
           }}
         >
           <p
@@ -91,9 +90,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             タイトル
-            <span className="ml-2 text-xs font-black text-orange-500">
-              REQUIRED
-            </span>
+            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
           </label>
 
           <input
@@ -113,9 +110,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             出発日
-            <span className="ml-2 text-xs font-black text-orange-500">
-              REQUIRED
-            </span>
+            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
           </label>
 
           <div className="relative">
@@ -149,9 +144,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             旅のメモ
-            <span className="ml-2 text-xs font-medium text-slate-400">
-              OPTIONAL
-            </span>
+            <span className="ml-2 text-xs font-medium text-slate-400">OPTIONAL</span>
           </label>
 
           <textarea
@@ -172,9 +165,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             SUMMER TICKET OFFICE
           </p>
 
-          <p className="mt-1 text-sm text-slate-500">
-            入力した内容で新しい切符を発行します。
-          </p>
+          <p className="mt-1 text-sm text-slate-500">入力した内容で新しい切符を発行します。</p>
         </div>
 
         <button
@@ -196,25 +187,16 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           }}
         >
           {/* ギザギザした外周 */}
-          <div
-            className="absolute inset-0 bg-[#3f7894]"
-            style={{ clipPath: stampShape }}
-          >
+          <div className="absolute inset-0 bg-[#3f7894]" style={{ clipPath: stampShape }}>
             {/* 中央を紙色で抜いて線だけに見せる */}
-            <div
-              className="absolute inset-[5px] bg-[#f7fbfd]"
-              style={{ clipPath: stampShape }}
-            />
+            <div className="absolute inset-[5px] bg-[#f7fbfd]" style={{ clipPath: stampShape }} />
           </div>
 
           {/* 内側の二重円 */}
           <div className="absolute inset-[18px] flex flex-col items-center justify-center rounded-full border-[3px] border-[#3f7894] text-center sm:inset-[22px]">
             <div className="absolute inset-[6px] rounded-full border-2 border-[#3f7894]" />
 
-            <span
-              className="relative leading-none"
-              style={{ fontSize: "clamp(28px, 5vw, 42px)" }}
-            >
+            <span className="relative leading-none" style={{ fontSize: "clamp(28px, 5vw, 42px)" }}>
               ✈︎
             </span>
 

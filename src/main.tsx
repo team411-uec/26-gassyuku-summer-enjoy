@@ -1,11 +1,11 @@
-import { StrictMode } from "react"
-import { createRoot } from "react-dom/client"
-import { App } from "./components"
-import "./lib/firebase"
-import "./style.css"
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { App } from "./components";
+import "./lib/firebase";
+import "./style.css";
 
 createRoot(document.getElementById("app")!).render(
   <StrictMode>
     <App />
   </StrictMode>,
-)
+);

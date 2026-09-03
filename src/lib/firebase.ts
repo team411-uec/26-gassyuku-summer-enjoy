@@ -1,7 +1,7 @@
-import { initializeApp } from "firebase/app"
-import { getAuth } from "firebase/auth"
-import { getFirestore } from "firebase/firestore/lite"
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check"
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore/lite";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,21 +10,21 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-}
+};
 
-const app = initializeApp(firebaseConfig)
+const app = initializeApp(firebaseConfig);
 
 if (import.meta.env.DEV) {
   // 開発時のみ。トークンはブラウザのコンソールに出力される
   // @ts-expect-error Firebase が参照するグローバル
-  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 }
 
 initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_SITE_KEY),
   isTokenAutoRefreshEnabled: true,
-})
+});
 
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export { app }
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export { app };

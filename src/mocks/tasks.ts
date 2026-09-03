@@ -1,4 +1,4 @@
-import type { Task } from "../types"
+import type { Task } from "../types";
 
 export const mockTasks: Task[] = [
   {
@@ -38,4 +38,4 @@ export const mockTasks: Task[] = [
     date: "2026-08-22",
     completed: false,
   },
-]
+];
