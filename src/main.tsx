@@ -1,27 +1,27 @@
-import { StrictMode, useState } from "react"
-import { createRoot } from "react-dom/client"
-import { TaskList } from "./components/TaskList"
-import { mockTasks } from "./mocks/tasks"
-import type { Task } from "./types"
-import "./style.css"
+import { StrictMode, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { TaskList } from "./components/TaskList";
+import { mockTasks } from "./mocks/tasks";
+import type { Task } from "./types";
+import "./style.css";
 
 /*
  * 外側と内側の点を15度ごとに交互に配置した形です。
  * 12個のギザギザが等間隔に並びます。
  */
 const stickerShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks)
+  const [tasks, setTasks] = useState<Task[]>(mockTasks);
 
   const handleToggle = (id: string, completed: boolean) => {
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
         task.id === id ? { ...task, completed } : task,
       ),
-    )
-  }
+    );
+  };
 
   return (
     <main className="min-h-screen bg-[#eaf7fb] px-3 py-6 text-left sm:px-6">
@@ -55,8 +55,7 @@ function App() {
             <div
               className="relative flex min-h-28 items-center bg-[#5798d9] px-5 pr-32 shadow-lg sm:min-h-36 sm:px-8 sm:pr-44"
               style={{
-                clipPath:
-                  "polygon(0 0, 100% 0, 91% 50%, 100% 100%, 0 100%)",
+                clipPath: "polygon(0 0, 100% 0, 91% 50%, 100% 100%, 0 100%)",
               }}
             >
               <div>
@@ -90,8 +89,7 @@ function App() {
             <div
               className="absolute right-5 top-1/2 z-10 h-28 w-28 -translate-y-1/2 rotate-6 sm:right-9 sm:h-36 sm:w-36"
               style={{
-                filter:
-                  "drop-shadow(4px 7px 5px rgba(45, 70, 90, 0.28))",
+                filter: "drop-shadow(4px 7px 5px rgba(45, 70, 90, 0.28))",
               }}
             >
               {/* 少しずれた白い台紙 */}
@@ -196,11 +194,11 @@ function App() {
         </section>
       </div>
     </main>
-  )
+  );
 }
 
 createRoot(document.getElementById("app")!).render(
   <StrictMode>
     <App />
   </StrictMode>,
-)
+);
