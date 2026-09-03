@@ -1,12 +1,22 @@
 {
   "name": "26-gassyuku-summer-enjoy",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
+    "format": "oxfmt --write .",
+    "lint": "oxlint .",
+    "check": "oxlint && oxfmt --write",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
+  },
+  "dependencies": {
+    "firebase": "^12.18.0",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -16,10 +26,5 @@
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "vite": "^8.2.2"
-  },
-  "dependencies": {
-    "firebase": "^12.18.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
   }
 }

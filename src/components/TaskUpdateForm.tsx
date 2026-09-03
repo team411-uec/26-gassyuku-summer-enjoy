@@ -1,53 +1,33 @@
-import {
-  useEffect,
-  useState,
-  type FormEvent,
-} from "react"
-import type { Task } from "../types"
+import { useEffect, useState, type FormEvent } from "react";
+import type { Task } from "../types";
 
 interface TaskUpdateFormProps {
-  initialData: Task
-  onSubmit: (
-    taskId: string,
-    updatedFields: Partial<Omit<Task, "id">>,
-  ) => void
-  onCancel?: () => void
+  initialData: Task;
+  onSubmit: (taskId: string, updatedFields: Partial<Omit<Task, "id">>) => void;
+  onCancel?: () => void;
 }
 
-export function TaskUpdateForm({
-  initialData,
-  onSubmit,
-  onCancel,
-}: TaskUpdateFormProps) {
-  const [title, setTitle] = useState(initialData.title)
-  const [description, setDescription] = useState(
-    initialData.description ?? "",
-  )
-  const [date, setDate] = useState(initialData.date)
+export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFormProps) {
+  const [title, setTitle] = useState(initialData.title);
+  const [description, setDescription] = useState(initialData.description ?? "");
+  const [date, setDate] = useState(initialData.date);
 
   /*
    * 別のタスクが渡されたとき、
    * 入力欄を新しいタスクの内容に更新します。
    */
   useEffect(() => {
-    setTitle(initialData.title)
-    setDescription(initialData.description ?? "")
-    setDate(initialData.date)
-  }, [
-    initialData.id,
-    initialData.title,
-    initialData.description,
-    initialData.date,
-  ])
+    setTitle(initialData.title);
+    setDescription(initialData.description ?? "");
+    setDate(initialData.date);
+  }, [initialData.id, initialData.title, initialData.description, initialData.date]);
 
-  const handleSubmit = (
-    event: FormEvent<HTMLFormElement>,
-  ) => {
-    event.preventDefault()
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
     if (!title.trim() || !date) {
-      alert("タイトルと日付は必須です")
-      return
+      alert("タイトルと日付は必須です");
+      return;
     }
 
     /*
@@ -58,8 +38,8 @@ export function TaskUpdateForm({
       title: title.trim(),
       description: description.trim() || undefined,
       date,
-    })
-  }
+    });
+  };
 
   return (
     <form
@@ -105,13 +85,9 @@ export function TaskUpdateForm({
                 aria-label="更新フォームを閉じる"
                 className="flex h-8 items-center justify-center gap-1.5 border border-slate-300 bg-white/85 px-3 text-slate-400 transition hover:border-slate-400 hover:bg-white hover:text-slate-600"
               >
-                <span className="text-lg leading-none">
-                  ×
-                </span>
+                <span className="text-lg leading-none">×</span>
 
-                <span className="font-mono text-[9px] font-bold tracking-wider">
-                  CLOSE
-                </span>
+                <span className="font-mono text-[9px] font-bold tracking-wider">CLOSE</span>
               </button>
             )}
           </div>
@@ -121,8 +97,7 @@ export function TaskUpdateForm({
         <div
           className="flex min-h-14 items-center justify-center bg-[#579bd9] px-12"
           style={{
-            clipPath:
-              "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
+            clipPath: "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
           }}
         >
           <h2
@@ -152,19 +127,14 @@ export function TaskUpdateForm({
             className="mb-2 block text-sm font-bold tracking-wide text-slate-600"
           >
             タイトル
-
-            <span className="ml-2 text-xs font-black text-orange-500">
-              REQUIRED
-            </span>
+            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
           </label>
 
           <input
             id="update-task-title"
             type="text"
             value={title}
-            onChange={(event) =>
-              setTitle(event.target.value)
-            }
+            onChange={(event) => setTitle(event.target.value)}
             placeholder="例：海で泳ぐ"
             autoComplete="off"
             className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 text-base text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)]"
@@ -178,10 +148,7 @@ export function TaskUpdateForm({
             className="mb-2 block text-sm font-bold tracking-wide text-slate-600"
           >
             出発日
-
-            <span className="ml-2 text-xs font-black text-orange-500">
-              REQUIRED
-            </span>
+            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
           </label>
 
           <div className="relative">
@@ -189,9 +156,7 @@ export function TaskUpdateForm({
               id="update-task-date"
               type="date"
               value={date}
-              onChange={(event) =>
-                setDate(event.target.value)
-              }
+              onChange={(event) => setDate(event.target.value)}
               className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 pr-12 text-base text-slate-700 outline-none transition [color-scheme:light] focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:h-7 [&::-webkit-calendar-picker-indicator]:w-7 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
             />
 
@@ -204,13 +169,7 @@ export function TaskUpdateForm({
               strokeWidth="1.8"
               className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#579bd9]"
             >
-              <rect
-                x="3"
-                y="5"
-                width="18"
-                height="16"
-                rx="2"
-              />
+              <rect x="3" y="5" width="18" height="16" rx="2" />
 
               <path d="M8 3v4M16 3v4M3 10h18" />
 
@@ -226,18 +185,13 @@ export function TaskUpdateForm({
             className="mb-2 block text-sm font-bold tracking-wide text-slate-600"
           >
             旅のメモ
-
-            <span className="ml-2 text-xs font-medium text-slate-400">
-              OPTIONAL
-            </span>
+            <span className="ml-2 text-xs font-medium text-slate-400">OPTIONAL</span>
           </label>
 
           <textarea
             id="update-task-description"
             value={description}
-            onChange={(event) =>
-              setDescription(event.target.value)
-            }
+            onChange={(event) => setDescription(event.target.value)}
             placeholder="例：友達と海に行って、夏らしい写真を撮る"
             rows={4}
             className="w-full resize-y border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 text-base leading-relaxed text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)]"
@@ -252,9 +206,7 @@ export function TaskUpdateForm({
             SUMMER TICKET OFFICE
           </p>
 
-          <p className="mt-1 text-sm text-slate-500">
-            内容を確認して、切符を再発行してください。
-          </p>
+          <p className="mt-1 text-sm text-slate-500">内容を確認して、切符を再発行してください。</p>
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -275,14 +227,11 @@ export function TaskUpdateForm({
             type="submit"
             className="group relative cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-7 py-3 font-black text-white shadow-[3px_3px_0_#387ab5] transition hover:-translate-y-0.5 hover:bg-[#72afe3] hover:shadow-[4px_5px_0_#387ab5] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
           >
-            <span className="mr-2 inline-block transition group-hover:rotate-180">
-              ↻
-            </span>
-
+            <span className="mr-2 inline-block transition group-hover:rotate-180">↻</span>
             変更した切符を再発行
           </button>
         </div>
       </div>
     </form>
-  )
+  );
 }

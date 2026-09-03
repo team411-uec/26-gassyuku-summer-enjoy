@@ -7,7 +7,7 @@ export interface Task {
   completed: boolean;
 }
 
-export interface User{
+export interface User {
   id: string;
   score: number;
 }

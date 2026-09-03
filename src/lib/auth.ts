@@ -1,5 +1,5 @@
-import { signInAnonymously, type User } from "firebase/auth"
-import { auth } from "./firebase"
+import { signInAnonymously, type User } from "firebase/auth";
+import { auth } from "./firebase";
 
 /**
  * 匿名でサインインし、ユーザーを返す。
@@ -8,9 +8,9 @@ import { auth } from "./firebase"
  * 終わるまで null を返すため、authStateReady() で復元完了を待ってから判定する。
  */
 export async function loginAnonymously(): Promise<User> {
-  await auth.authStateReady()
-  if (auth.currentUser) return auth.currentUser
+  await auth.authStateReady();
+  if (auth.currentUser) return auth.currentUser;
 
-  const credential = await signInAnonymously(auth)
-  return credential.user
+  const credential = await signInAnonymously(auth);
+  return credential.user;
 }

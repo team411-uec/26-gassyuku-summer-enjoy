@@ -1,30 +1,25 @@
-import {
-  getAI,
-  getGenerativeModel,
-  GoogleAIBackend,
-  Schema,
-} from "firebase/ai"
-import type { Task } from "../types"
-import { app } from "./firebase"
+import { getAI, getGenerativeModel, GoogleAIBackend, Schema } from "firebase/ai";
+import type { Task } from "../types";
+import { app } from "./firebase";
 
 /** AI が提案するタスク。そのまま Task に変換して追加する。 */
 export type Suggestion = {
-  title: string
-  description: string
+  title: string;
+  description: string;
   /** 実行までの日数。date に変換して使う。 */
-  daysAhead: number
+  daysAhead: number;
   /** 達成ポイント。ランキングのスコアに加算される。 */
-  points: number
-}
+  points: number;
+};
 
-const MODEL = "gemini-3.7-flash"
+const MODEL = "gemini-3.7-flash";
 
-const MIN_DAYS_AHEAD = 1
-const MAX_DAYS_AHEAD = 14
+const MIN_DAYS_AHEAD = 1;
+const MAX_DAYS_AHEAD = 14;
 
-const MIN_POINTS = 5
-const MAX_POINTS = 20
-const DEFAULT_POINTS = 10
+const MIN_POINTS = 5;
+const MAX_POINTS = 20;
+const DEFAULT_POINTS = 10;
 
 /**
  * ポイントの基準。
@@ -34,7 +29,7 @@ const DEFAULT_POINTS = 10
  * ランキングが公平でなくなる。
  */
 const POINTS_GUIDE =
-  "達成ポイント。思い立ってすぐできる手軽なものは 5、移動や道具の用意が必要なものは 10、計画・費用・人との調整が必要な特別なものは 15 前後。5 以上 20 以下。"
+  "達成ポイント。思い立ってすぐできる手軽なものは 5、移動や道具の用意が必要なものは 10、計画・費用・人との調整が必要な特別なものは 15 前後。5 以上 20 以下。";
 
 const suggestionSchema = Schema.object({
   properties: {
@@ -50,15 +45,15 @@ const suggestionSchema = Schema.object({
     }),
     points: Schema.integer({ description: POINTS_GUIDE }),
   },
-})
+});
 
 const pointsSchema = Schema.object({
   properties: {
     points: Schema.integer({ description: POINTS_GUIDE }),
   },
-})
+});
 
-const ai = getAI(app, { backend: new GoogleAIBackend() })
+const ai = getAI(app, { backend: new GoogleAIBackend() });
 
 const suggestionModel = getGenerativeModel(ai, {
   model: MODEL,
@@ -66,7 +61,7 @@ const suggestionModel = getGenerativeModel(ai, {
     responseMimeType: "application/json",
     responseSchema: suggestionSchema,
   },
-})
+});
 
 const pointsModel = getGenerativeModel(ai, {
   model: MODEL,
@@ -74,13 +69,13 @@ const pointsModel = getGenerativeModel(ai, {
     responseMimeType: "application/json",
     responseSchema: pointsSchema,
   },
-})
+});
 
 const INSTRUCTION = {
   done: "ユーザーはこのタスクを達成しました。同じくらいの手間で楽しめる、関連した夏のタスクを 1 つ提案してください。",
   failed:
     "ユーザーはこのタスクを達成できませんでした。同じ楽しさを味わえて、準備・時間・費用の負担がより軽い代わりのタスクを 1 つ提案してください。",
-} as const
+} as const;
 
 function buildPrompt(
   mode: "done" | "failed",
@@ -100,7 +95,7 @@ function buildPrompt(
       : "- （なし）",
   ]
     .filter((line) => line !== "")
-    .join("\n")
+    .join("\n");
 }
 
 /**
@@ -115,17 +110,15 @@ export async function suggestTask(
   existingTitles: string[],
 ): Promise<Suggestion | null> {
   try {
-    const result = await suggestionModel.generateContent(
-      buildPrompt(mode, task, existingTitles),
-    )
-    const parsed = JSON.parse(result.response.text()) as Suggestion
+    const result = await suggestionModel.generateContent(buildPrompt(mode, task, existingTitles));
+    const parsed = JSON.parse(result.response.text()) as Suggestion;
 
-    if (!parsed.title) return null
+    if (!parsed.title) return null;
 
-    return parsed
+    return parsed;
   } catch (error) {
-    console.error("タスクの提案に失敗しました", error)
-    return null
+    console.error("タスクの提案に失敗しました", error);
+    return null;
   }
 }
 
@@ -148,13 +141,13 @@ export async function estimateTaskPoints(
       ]
         .filter((line) => line !== "")
         .join("\n"),
-    )
-    const parsed = JSON.parse(result.response.text()) as { points?: number }
+    );
+    const parsed = JSON.parse(result.response.text()) as { points?: number };
 
-    return clampPoints(parsed.points)
+    return clampPoints(parsed.points);
   } catch (error) {
-    console.error("ポイントの見積もりに失敗しました", error)
-    return DEFAULT_POINTS
+    console.error("ポイントの見積もりに失敗しました", error);
+    return DEFAULT_POINTS;
   }
 }
 
@@ -165,10 +158,10 @@ export async function estimateTaskPoints(
  */
 function clampPoints(points: number | undefined): number {
   if (typeof points !== "number" || !Number.isFinite(points)) {
-    return DEFAULT_POINTS
+    return DEFAULT_POINTS;
   }
 
-  return Math.min(Math.max(Math.round(points), MIN_POINTS), MAX_POINTS)
+  return Math.min(Math.max(Math.round(points), MIN_POINTS), MAX_POINTS);
 }
 
 /**
@@ -178,19 +171,16 @@ function clampPoints(points: number | undefined): number {
  * 前日の日付になるため、ローカルの日付から組み立てる。
  */
 export function toDueDate(daysAhead: number): string {
-  const days = Math.min(
-    Math.max(Math.round(daysAhead), MIN_DAYS_AHEAD),
-    MAX_DAYS_AHEAD,
-  )
+  const days = Math.min(Math.max(Math.round(daysAhead), MIN_DAYS_AHEAD), MAX_DAYS_AHEAD);
 
-  const date = new Date()
-  date.setDate(date.getDate() + days)
+  const date = new Date();
+  date.setDate(date.getDate() + days);
 
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, "0")
-  const day = String(date.getDate()).padStart(2, "0")
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`
+  return `${year}-${month}-${day}`;
 }
 
 /** 提案を、そのまま addTask に渡せる形にする。 */
@@ -201,5 +191,5 @@ export function toNewTask(suggestion: Suggestion): Omit<Task, "id"> {
     date: toDueDate(suggestion.daysAhead),
     points: clampPoints(suggestion.points),
     completed: false,
-  }
+  };
 }
