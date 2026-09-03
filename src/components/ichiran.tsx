@@ -4,6 +4,7 @@ import type { Task } from "../types"
 interface IchiranProps {
   tasks: Task[]
   onToggle: (id: string, completed: boolean) => void
+  onEdit: (task: Task) => void
   onOpenTaskForm: () => void
 }
 
@@ -13,6 +14,7 @@ const stickerShape =
 export function Ichiran({
   tasks,
   onToggle,
+  onEdit,
   onOpenTaskForm,
 }: IchiranProps) {
   return (
@@ -190,7 +192,7 @@ export function Ichiran({
             </button>
           </div>
 
-          <TaskList tasks={tasks} onToggle={onToggle} />
+          <TaskList tasks={tasks} onToggle={onToggle} onEdit={onEdit} />
         </section>
       </div>
     </main>
