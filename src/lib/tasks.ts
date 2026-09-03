@@ -2,6 +2,7 @@ import {
   addDoc,
   getDocs,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   orderBy,
@@ -46,12 +47,21 @@ export async function updateTask(
   await updateDoc(doc(db, "users", userId, "tasks", taskId), data)
 }
 
-export const changeIsCompletedTask = async (userId: string, taskId: string) :Promise<void>=> {
+export async function deleteTask(
+  userId: string,
+  taskId: string,
+): Promise<void> {
+  await deleteDoc(doc(db, "users", userId, "tasks", taskId))
+}
+
+export const changeIsCompletedTask = async (
+  userId: string,
+  taskId: string,
+): Promise<void> => {
   const taskSnap = await getDoc(doc(db, "users", userId, "tasks", taskId))
 
-  if(!taskSnap.exists()) return
+  if (!taskSnap.exists()) return
 
   const isCompletedTask: boolean = taskSnap.data()?.completed
-  await updateTask(userId, taskId, {completed: !isCompletedTask})
-
+  await updateTask(userId, taskId, { completed: !isCompletedTask })
 }

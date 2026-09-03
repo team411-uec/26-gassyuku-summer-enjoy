@@ -2,7 +2,8 @@ import type { Task } from "../types";
 import { useState } from "react";
 
 interface TaskFormProps {
-  onSubmit: (task: Omit<Task, "id">) => void;
+  /** points は AI が内容から見積もるため、フォームからは渡さない。 */
+  onSubmit: (task: Omit<Task, "id" | "points">) => void;
 }
 
 const stampShape =
@@ -27,7 +28,6 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
         onSubmit({
           title,
           description: description || undefined,
-          points: 0,
           date,
           completed: false,
         });

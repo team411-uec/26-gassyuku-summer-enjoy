@@ -3,6 +3,7 @@ import { Ichiran } from "./ichiran"
 import { TaskForm } from "./TaskForm"
 import { TaskUpdateForm } from "./TaskUpdateForm"
 import type { Task } from "../types"
+import { estimateTaskPoints } from "../lib/ai"
 import { loginAnonymously } from "../lib/auth"
 import { addTask, getTasks, updateTask } from "../lib/tasks"
 
@@ -32,11 +33,15 @@ export const App = () => {
     if (userId) void updateTask(userId, id, { completed })
   }
 
-  const handleAddTask = async (newTask: Omit<Task, "id">) => {
+  const handleAddTask = async (newTask: Omit<Task, "id" | "points">) => {
     if (!userId) return
 
-    const id = await addTask(userId, newTask)
-    setTasks((currentTasks) => [...currentTasks, { ...newTask, id }])
+    // ポイントは内容に応じて AI が決める。失敗しても既定値が返るので登録は止まらない。
+    const points = await estimateTaskPoints(newTask)
+    const task = { ...newTask, points }
+
+    const id = await addTask(userId, task)
+    setTasks((currentTasks) => [...currentTasks, { ...task, id }])
   }
 
   const handleUpdate = async (
