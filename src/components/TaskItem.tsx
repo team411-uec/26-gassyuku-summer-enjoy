@@ -2,8 +2,10 @@ import type { Task } from "../types"
 
 interface TaskItemProps {
   task: Task
-  onToggle: (id: string, completed: boolean) => void
+  onToggle: (id: string, completed: boolean) => void | Promise<void>
   onEdit: (task: Task) => void
+  onDelete: (task: Task) => void | Promise<void>
+  isPending: boolean
 }
 
 const stampShape =
@@ -13,6 +15,8 @@ export function TaskItem({
   task,
   onToggle,
   onEdit,
+  onDelete,
+  isPending,
 }: TaskItemProps) {
   return (
     <li
@@ -56,7 +60,6 @@ export function TaskItem({
               }}
             />
           )}
-
           {/* PC：本体側のちぎれ目 */}
           {task.completed && (
             <div
@@ -76,42 +79,70 @@ export function TaskItem({
                 SUMMER TICKET
               </p>
 
-              <p className="mt-1 truncate font-mono text-[10px] text-slate-400">
-                {task.id.toUpperCase()}
-              </p>
+              <div className="mt-1 flex items-center gap-2">
+                <p className="truncate font-mono text-[10px] text-slate-400">
+                  {task.id.toUpperCase()}
+                </p>
+
+                <span
+                  className={`whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-black tracking-wide ${
+                    task.completed
+                      ? "border-slate-300 text-slate-400"
+                      : "border-[#e6c56d] bg-[#fdf4de] text-[#b3820b]"
+                  }`}
+                >
+                  {task.points ?? 0} pt
+                </span>
+              </div>
             </div>
 
-            {/* 完了後も表示するバーコード型編集ボタン */}
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation()
-                onEdit(task)
-              }}
-              aria-label={`${task.title}を編集する`}
-              className="group relative h-12 w-36 shrink-0 cursor-pointer overflow-hidden bg-transparent transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#579bd9] focus-visible:ring-offset-2"
-            >
-              {/* EDITの下に敷くバーコード */}
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 opacity-35 transition duration-200 group-hover:scale-x-105 group-hover:opacity-50"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(90deg, #475569 0 1px, transparent 1px 3px, #475569 3px 6px, transparent 6px 8px, #475569 8px 9px, transparent 9px 12px)",
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              {/* 完了後も表示するバーコード型編集ボタン */}
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onEdit(task)
                 }}
-              />
-
-              {/* 大きなEDIT文字 */}
-              <span
-                className="absolute inset-0 flex items-center justify-center font-serif text-[30px] font-black tracking-wide text-white transition"
-                style={{
-                  textShadow:
-                    "1px 1px 0 #0673f0, -1px -1px 0 #ebeef1, 1px -1px 0 #0d82f7, -1px 1px 0 #097bec",
-                }}
+                disabled={isPending}
+                aria-label={`${task.title}を編集する`}
+                className="group relative h-12 w-36 cursor-pointer overflow-hidden bg-transparent transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#579bd9] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Edit
-              </span>
-            </button>
+                {/* EDITの下に敷くバーコード */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 opacity-35 transition duration-200 group-hover:scale-x-105 group-hover:opacity-50"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(90deg, #475569 0 1px, transparent 1px 3px, #475569 3px 6px, transparent 6px 8px, #475569 8px 9px, transparent 9px 12px)",
+                  }}
+                />
+
+                {/* 大きなEDIT文字 */}
+                <span
+                  className="absolute inset-0 flex items-center justify-center font-serif text-[30px] font-black tracking-wide text-white transition"
+                  style={{
+                    textShadow:
+                      "1px 1px 0 #0673f0, -1px -1px 0 #ebeef1, 1px -1px 0 #0d82f7, -1px 1px 0 #097bec",
+                  }}
+                >
+                  Edit
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  if (window.confirm(`「${task.title}」を削除しますか？`)) void onDelete(task)
+                }}
+                disabled={isPending}
+                aria-label={`${task.title}を削除`}
+                className="border-b border-red-300 pb-0.5 font-mono text-[10px] font-black tracking-[0.14em] text-red-400 transition hover:border-red-600 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                DELETE
+              </button>
+            </div>
           </div>
 
           {/* タスクタイトルの帯 */}
@@ -195,6 +226,7 @@ export function TaskItem({
             onChange={(event) =>
               onToggle(task.id, event.target.checked)
             }
+            disabled={isPending}
             aria-label={
               task.completed
                 ? `${task.title}を未完了に戻す`

@@ -1,11 +1,19 @@
-import { TaskList } from "./TaskList"
+import type { ReactNode } from "react"
 import type { Task } from "../types"
+import { TaskList } from "./TaskList"
 
 interface IchiranProps {
   tasks: Task[]
-  onToggle: (id: string, completed: boolean) => void
+  onToggle: (id: string, completed: boolean) => void | Promise<void>
   onEdit: (task: Task) => void
+  onDelete: (task: Task) => void | Promise<void>
+  pendingTaskIds: Set<string>
+  isLoading: boolean
+  loadError: string | null
+  onRetry: () => void
+  feedback: string | null
   onOpenTaskForm: () => void
+  children?: ReactNode
 }
 
 const stickerShape =
@@ -15,7 +23,14 @@ export function Ichiran({
   tasks,
   onToggle,
   onEdit,
+  onDelete,
+  pendingTaskIds,
+  isLoading,
+  loadError,
+  onRetry,
+  feedback,
   onOpenTaskForm,
+  children,
 }: IchiranProps) {
   return (
     <main className="min-h-screen bg-[#eaf7fb] px-3 py-6 text-left sm:px-6">
@@ -198,7 +213,8 @@ export function Ichiran({
             <button
               type="button"
               onClick={onOpenTaskForm}
-              className="group relative h-[72px] w-[230px] shrink-0 cursor-pointer bg-[#ffd323] pl-14 pr-5 text-left transition hover:-translate-y-0.5 hover:bg-[#ffdc4d]"
+              disabled={isLoading || Boolean(loadError)}
+              className="group relative h-[72px] w-[230px] shrink-0 cursor-pointer bg-[#ffd323] pl-14 pr-5 text-left transition hover:-translate-y-0.5 hover:bg-[#ffdc4d] disabled:cursor-not-allowed disabled:opacity-50"
               style={{
                 clipPath:
                   "polygon(10% 0, 100% 0, 100% 100%, 10% 100%, 0 82%, 0 18%)",
@@ -233,11 +249,47 @@ export function Ichiran({
             </button>
           </div>
 
-          <TaskList
-            tasks={tasks}
-            onToggle={onToggle}
-            onEdit={onEdit}
-          />
+          {feedback && (
+            <p
+              role="alert"
+              className="mb-5 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {feedback}
+            </p>
+          )}
+
+          {isLoading ? (
+            <div
+              role="status"
+              className="border-2 border-dashed border-sky-300 bg-[#fffdf8] p-10 text-center shadow-sm"
+            >
+              <p className="text-lg font-bold text-[#3986c7]">タスクを読み込んでいます…</p>
+            </div>
+          ) : loadError ? (
+            <div
+              role="alert"
+              className="border-2 border-dashed border-red-300 bg-[#fffdf8] p-10 text-center shadow-sm"
+            >
+              <p className="text-lg font-bold text-red-700">{loadError}</p>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="mt-4 border-2 border-[#387ab5] bg-[#579bd9] px-5 py-2 font-bold text-white transition hover:bg-[#67a7df]"
+              >
+                再読み込み
+              </button>
+            </div>
+          ) : (
+            <TaskList
+              tasks={tasks.filter((task) => !task.completed)}
+              onToggle={onToggle}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              pendingTaskIds={pendingTaskIds}
+            />
+          )}
+
+          {!isLoading && !loadError && children}
         </section>
       </div>
     </main>
