@@ -1,13 +1,13 @@
-import type { Task } from "../types";
+import type { Task } from "../types"
 
 interface TaskItemProps {
-  task: Task;
-  onToggle: (id: string, completed: boolean) => void;
-  onEdit: (task: Task) => void;
+  task: Task
+  onToggle: (id: string, completed: boolean) => void
+  onEdit: (task: Task) => void
 }
 
 const stampShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
 
 export function TaskItem({
   task,
@@ -69,34 +69,55 @@ export function TaskItem({
             />
           )}
 
-          {/* チケット番号と編集ボタン */}
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="font-mono text-xs font-bold tracking-[0.16em] text-[#559bdd]">
-              SUMMER TICKET
-            </p>
-
-            <div className="flex items-center gap-3">
-              <p className="font-mono text-xs text-slate-400">
-                {task.id.toUpperCase()}
+          {/* チケット情報と編集ボタン */}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-mono text-xs font-bold tracking-[0.16em] text-[#559bdd]">
+                SUMMER TICKET
               </p>
 
-              <button
-                type="button"
-                onClick={() => onEdit(task)}
-                aria-label={`${task.title}を編集する`}
-                className="border-b border-[#579bd9] pb-0.5 font-mono text-[10px] font-black tracking-[0.14em] text-[#579bd9] transition hover:border-[#d79f00] hover:text-[#d79f00]"
-              >
-                EDIT
-              </button>
+              <p className="mt-1 truncate font-mono text-[10px] text-slate-400">
+                {task.id.toUpperCase()}
+              </p>
             </div>
+
+            {/* 完了後も表示するバーコード型編集ボタン */}
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                onEdit(task)
+              }}
+              aria-label={`${task.title}を編集する`}
+              className="group relative h-12 w-36 shrink-0 cursor-pointer overflow-hidden bg-transparent transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#579bd9] focus-visible:ring-offset-2"
+            >
+              {/* EDITの下に敷くバーコード */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 opacity-35 transition duration-200 group-hover:scale-x-105 group-hover:opacity-50"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(90deg, #475569 0 1px, transparent 1px 3px, #475569 3px 6px, transparent 6px 8px, #475569 8px 9px, transparent 9px 12px)",
+                }}
+              />
+
+              {/* 大きなEDIT文字 */}
+              <span
+                className="absolute inset-0 flex items-center justify-center font-serif text-[30px] font-black tracking-wide text-white transition"
+                style={{
+                  textShadow:
+                    "1px 1px 0 #0673f0, -1px -1px 0 #ebeef1, 1px -1px 0 #0d82f7, -1px 1px 0 #097bec",
+                }}
+              >
+                Edit
+              </span>
+            </button>
           </div>
 
           {/* タスクタイトルの帯 */}
           <div
             className={`mb-4 flex min-h-12 items-center px-5 pr-12 text-white ${
-              task.completed
-                ? "bg-slate-400"
-                : "bg-[#559bdd]"
+              task.completed ? "bg-slate-400" : "bg-[#559bdd]"
             }`}
             style={{
               clipPath:
@@ -167,7 +188,7 @@ export function TaskItem({
             />
           )}
 
-          {/* 見た目には表示しないチェックボックス */}
+          {/* 表示されないチェックボックス */}
           <input
             type="checkbox"
             checked={task.completed}
@@ -209,15 +230,11 @@ export function TaskItem({
               {/* ギザギザしたスタンプの外周 */}
               <div
                 className="absolute inset-0 bg-[#d79f00]"
-                style={{
-                  clipPath: stampShape,
-                }}
+                style={{ clipPath: stampShape }}
               >
                 <div
                   className="absolute inset-[3px] bg-[#f0f2f2]"
-                  style={{
-                    clipPath: stampShape,
-                  }}
+                  style={{ clipPath: stampShape }}
                 />
               </div>
 
@@ -242,5 +259,5 @@ export function TaskItem({
         </label>
       </div>
     </li>
-  );
+  )
 }

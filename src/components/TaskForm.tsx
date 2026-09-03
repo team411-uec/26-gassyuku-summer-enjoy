@@ -36,7 +36,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
 
         window.setTimeout(() => {
           setIsIssued(false);
-        }, 3000);
+        }, 700);
 
         setTitle("");
         setDescription("");
