@@ -113,17 +113,7 @@ export const App = () => {
             className="relative w-full max-w-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={closeUpdateForm}
-              aria-label="更新フォームを閉じる"
-              className="absolute right-3 top-3 z-50 flex h-8 w-20 items-center justify-center gap-1.5 border border-slate-300 bg-white/85 text-slate-400 transition hover:border-slate-400 hover:bg-white hover:text-slate-600"
-            >
-              <span className="text-lg leading-none">×</span>
-              <span className="font-mono text-[9px] font-bold tracking-wider">
-                CLOSE
-              </span>
-            </button>
+
 
             <TaskUpdateForm
               key={editingTask.id}

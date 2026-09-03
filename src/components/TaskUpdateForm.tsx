@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react"
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from "react"
 import type { Task } from "../types"
 
 interface TaskUpdateFormProps {
@@ -37,7 +41,7 @@ export function TaskUpdateForm({
   ])
 
   const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
+    event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault()
 
@@ -69,8 +73,9 @@ export function TaskUpdateForm({
 
       {/* フォーム上部 */}
       <div className="relative border-b-2 border-dashed border-sky-200 px-5 pb-5 pt-6 sm:px-7">
-        <div className="mb-3 flex items-start justify-between gap-4">
-          <div>
+        <div className="mb-3 flex flex-wrap items-start gap-3">
+          {/* チケット情報 */}
+          <div className="min-w-0 flex-1">
             <p
               className="font-mono font-black tracking-[0.2em]"
               style={{
@@ -87,9 +92,29 @@ export function TaskUpdateForm({
             </p>
           </div>
 
-          <span className="border border-[#579bd9] px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-[#579bd9]">
-            EDITING
-          </span>
+          {/* EDITINGとCLOSEを同じ箱で管理 */}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <span className="whitespace-nowrap border border-[#579bd9] px-2 py-1 font-mono text-[9px] font-bold tracking-[0.15em] text-[#579bd9]">
+              EDITING
+            </span>
+
+            {onCancel && (
+              <button
+                type="button"
+                onClick={onCancel}
+                aria-label="更新フォームを閉じる"
+                className="flex h-8 items-center justify-center gap-1.5 border border-slate-300 bg-white/85 px-3 text-slate-400 transition hover:border-slate-400 hover:bg-white hover:text-slate-600"
+              >
+                <span className="text-lg leading-none">
+                  ×
+                </span>
+
+                <span className="font-mono text-[9px] font-bold tracking-wider">
+                  CLOSE
+                </span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 両端がしっぽになった帯 */}
@@ -137,7 +162,9 @@ export function TaskUpdateForm({
             id="update-task-title"
             type="text"
             value={title}
-            onChange={(event) => setTitle(event.target.value)}
+            onChange={(event) =>
+              setTitle(event.target.value)
+            }
             placeholder="例：海で泳ぐ"
             autoComplete="off"
             className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 text-base text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)]"
@@ -162,7 +189,9 @@ export function TaskUpdateForm({
               id="update-task-date"
               type="date"
               value={date}
-              onChange={(event) => setDate(event.target.value)}
+              onChange={(event) =>
+                setDate(event.target.value)
+              }
               className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 pr-12 text-base text-slate-700 outline-none transition [color-scheme:light] focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:h-7 [&::-webkit-calendar-picker-indicator]:w-7 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
             />
 
@@ -230,6 +259,7 @@ export function TaskUpdateForm({
 
         <div className="flex flex-col gap-3 sm:flex-row">
           {/* キャンセル */}
+
           {onCancel && (
             <button
               type="button"
