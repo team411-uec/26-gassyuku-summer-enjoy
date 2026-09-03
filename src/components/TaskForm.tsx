@@ -1,28 +1,28 @@
-import type { Task } from "../types"
-import { useState } from "react"
+import type { Task } from "../types";
+import { useState } from "react";
 
 interface TaskFormProps {
   /** points は AI が内容から見積もるため、フォームからは渡さない。 */
-  onSubmit: (task: Omit<Task, "id" | "points">) => void
+  onSubmit: (task: Omit<Task, "id" | "points">) => void;
 }
 
 const stampShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
 export function TaskForm({ onSubmit }: TaskFormProps) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [date, setDate] = useState("")
-  const [isIssued, setIsIssued] = useState(false)
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [isIssued, setIsIssued] = useState(false);
 
   return (
     <form
       onSubmit={(event) => {
-        event.preventDefault()
+        event.preventDefault();
 
         if (!title || !date) {
-          alert("タイトルと日付は必須です")
-          return
+          alert("タイトルと日付は必須です");
+          return;
         }
 
         onSubmit({
@@ -30,17 +30,17 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           description: description || undefined,
           date,
           completed: false,
-        })
+        });
 
-        setIsIssued(true)
+        setIsIssued(true);
 
         window.setTimeout(() => {
-          setIsIssued(false)
-        }, 3000)
+          setIsIssued(false);
+        }, 3000);
 
-        setTitle("")
-        setDescription("")
-        setDate("")
+        setTitle("");
+        setDescription("");
+        setDate("");
       }}
       className="relative overflow-hidden border-2 border-sky-200 bg-[#fffefa] shadow-[0_8px_22px_rgba(45,93,126,0.14)]"
     >
@@ -77,10 +77,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           </p>
         </div>
 
-        <p
-          className="mt-3 text-slate-600"
-          style={{ fontSize: "15px" }}
-        >
+        <p className="mt-3 text-slate-600" style={{ fontSize: "15px" }}>
           この夏にやってみたいことを、1枚の切符にしましょう。
         </p>
       </div>
@@ -193,7 +190,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
       {isIssued && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-5 left-40 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:left-auto sm:right-[0px] sm:h-52 sm:w-52" 
+          className="pointer-events-none absolute -bottom-5 left-40 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:left-auto sm:right-[0px] sm:h-52 sm:w-52"
           style={{
             filter: "drop-shadow(3px 4px 0 rgba(63, 121, 148, 0.16))",
           }}
@@ -238,5 +235,5 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
         </div>
       )}
     </form>
-  )
+  );
 }
