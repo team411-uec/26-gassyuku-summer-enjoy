@@ -109,7 +109,7 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
           className="pointer-events-none absolute bottom-2 right-0 z-20 h-28 w-28 -rotate-12 text-[#d79f00] sm:bottom-3 sm:right-4"
         >
           <div
-            className="absolute inset-0 bg-[#df7894]"
+            className="absolute inset-0 bg-[#d79f00]"
             style={{ clipPath: stampShape }}
           >
             <div

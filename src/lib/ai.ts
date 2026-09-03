@@ -13,10 +13,28 @@ export type Suggestion = {
   description: string
   /** 実行までの日数。date に変換して使う。 */
   daysAhead: number
+  /** 達成ポイント。ランキングのスコアに加算される。 */
+  points: number
 }
+
+const MODEL = "gemini-3.7-flash"
 
 const MIN_DAYS_AHEAD = 1
 const MAX_DAYS_AHEAD = 14
+
+const MIN_POINTS = 5
+const MAX_POINTS = 20
+const DEFAULT_POINTS = 10
+
+/**
+ * ポイントの基準。
+ *
+ * AI が提案したタスクと、ユーザーが自分で登録したタスクの両方で同じ文言を
+ * 使う。基準が違うと「AI 提案のタスクだけ高得点」といった歪みが生まれ、
+ * ランキングが公平でなくなる。
+ */
+const POINTS_GUIDE =
+  "達成ポイント。思い立ってすぐできる手軽なものは 5、移動や道具の用意が必要なものは 10、計画・費用・人との調整が必要な特別なものは 15 前後。5 以上 20 以下。"
 
 const suggestionSchema = Schema.object({
   properties: {
@@ -30,16 +48,31 @@ const suggestionSchema = Schema.object({
       description:
         "実行までの日数。思い立ってすぐできるものは 1、道具や場所の準備・人との予定合わせが必要なものほど大きくする。1 以上 14 以下。",
     }),
+    points: Schema.integer({ description: POINTS_GUIDE }),
+  },
+})
+
+const pointsSchema = Schema.object({
+  properties: {
+    points: Schema.integer({ description: POINTS_GUIDE }),
   },
 })
 
 const ai = getAI(app, { backend: new GoogleAIBackend() })
 
-const model = getGenerativeModel(ai, {
-  model: "gemini-3.7-flash",
+const suggestionModel = getGenerativeModel(ai, {
+  model: MODEL,
   generationConfig: {
     responseMimeType: "application/json",
     responseSchema: suggestionSchema,
+  },
+})
+
+const pointsModel = getGenerativeModel(ai, {
+  model: MODEL,
+  generationConfig: {
+    responseMimeType: "application/json",
+    responseSchema: pointsSchema,
   },
 })
 
@@ -82,7 +115,7 @@ export async function suggestTask(
   existingTitles: string[],
 ): Promise<Suggestion | null> {
   try {
-    const result = await model.generateContent(
+    const result = await suggestionModel.generateContent(
       buildPrompt(mode, task, existingTitles),
     )
     const parsed = JSON.parse(result.response.text()) as Suggestion
@@ -94,6 +127,48 @@ export async function suggestTask(
     console.error("タスクの提案に失敗しました", error)
     return null
   }
+}
+
+/**
+ * ユーザーが自分で登録したタスクに、達成ポイントを付ける。
+ *
+ * 失敗してもタスクの登録自体は続けられるべきなので、既定値を返す。
+ */
+export async function estimateTaskPoints(
+  task: Pick<Task, "title" | "description">,
+): Promise<number> {
+  try {
+    const result = await pointsModel.generateContent(
+      [
+        "夏のやりたいことを管理するアプリで、ユーザーが登録したタスクに達成ポイントを付けます。",
+        "タスクの手間に見合ったポイントを 1 つ決めてください。",
+        "",
+        `タイトル: ${task.title}`,
+        task.description ? `説明: ${task.description}` : "",
+      ]
+        .filter((line) => line !== "")
+        .join("\n"),
+    )
+    const parsed = JSON.parse(result.response.text()) as { points?: number }
+
+    return clampPoints(parsed.points)
+  } catch (error) {
+    console.error("ポイントの見積もりに失敗しました", error)
+    return DEFAULT_POINTS
+  }
+}
+
+/**
+ * AI が範囲外の値を返したときの保険。
+ *
+ * スキーマの description は指示であって強制ではないため、コード側で担保する。
+ */
+function clampPoints(points: number | undefined): number {
+  if (typeof points !== "number" || !Number.isFinite(points)) {
+    return DEFAULT_POINTS
+  }
+
+  return Math.min(Math.max(Math.round(points), MIN_POINTS), MAX_POINTS)
 }
 
 /**
@@ -124,6 +199,7 @@ export function toNewTask(suggestion: Suggestion): Omit<Task, "id"> {
     title: suggestion.title,
     description: suggestion.description,
     date: toDueDate(suggestion.daysAhead),
+    points: clampPoints(suggestion.points),
     completed: false,
   }
 }
