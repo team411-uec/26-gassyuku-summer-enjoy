@@ -166,27 +166,35 @@ export function Ichiran({
             <button
               type="button"
               onClick={onOpenTaskForm}
-              className="group relative min-w-52 cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-5 py-3 text-left text-white shadow-[4px_4px_0_#387ab5] transition hover:-translate-y-1 hover:bg-[#67a7df] hover:shadow-[5px_6px_0_#387ab5] active:translate-x-1 active:translate-y-1 active:shadow-none"
+              className="group relative h-[72px] w-[230px] cursor-pointer bg-[#ffd323] pl-14 pr-5 text-left transition hover:-translate-y-0.5 hover:bg-[#ffdc4d]"
+              style={{
+                clipPath:
+                  "polygon(10% 0, 100% 0, 100% 100%, 10% 100%, 0 82%, 0 18%)",
+              }}
             >
-              <span className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-[#fffaf3]" />
-              <span className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-[#fffaf3]" />
-
-              <span className="flex items-center gap-3">
-                {/* 白い丸＋黄色い十字 */}
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-2xl font-black text-[#d79f00] shadow-sm transition group-hover:rotate-90">
-                  ＋
-                </span>
-
-                <span>
-                  <span className="block text-[10px] font-black tracking-[0.18em] text-white/75">
-                    ISSUE A NEW TICKET
-                  </span>
-
-                  <span className="block text-base font-black">
-                    新しい夏を追加
-                  </span>
-                </span>
+              {/* タグの穴 */}
+              <span className="absolute left-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-[#fffaf3]">
+                <span className="h-3 w-3 rounded-full bg-[#579bd9]" />
               </span>
+
+              {/* 小さい英字 */}
+              <span className="block font-mono text-[11px] font-black tracking-[0.18em] text-[#287ab9]">
+                NEW SUMMER TAG
+              </span>
+
+              {/* メインテキスト */}
+              <span className="mt-1 flex items-center gap-2 whitespace-nowrap text-[17px] font-black text-slate-700">
+                <span className="text-xl leading-none text-[#287ab9]">＋</span>
+                新しい夏を追加
+              </span>
+
+              {/* 値札らしい番号 */}
+              <span className="absolute right-4 top-2 font-mono text-[8px] font-bold tracking-wider text-[#287ab9]/70">
+                No.2026
+              </span>
+
+              {/* 下側の飾り線 */}
+              <span className="absolute bottom-2 left-14 right-4 h-px bg-[#287ab9]/30" />
             </button>
           </div>
 
