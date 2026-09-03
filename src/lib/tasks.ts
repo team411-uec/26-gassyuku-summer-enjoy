@@ -1,12 +1,13 @@
 import {
   addDoc,
+  getDocs,
   collection,
   doc,
-  getDocs,
+  getDoc,
   orderBy,
   query,
   updateDoc,
-} from "firebase/firestore"
+} from "firebase/firestore/lite"
 import type { Task } from "../types"
 import { db } from "./firebase"
 
@@ -43,4 +44,14 @@ export async function updateTask(
   data: Partial<Omit<Task, "id">>,
 ): Promise<void> {
   await updateDoc(doc(db, "users", userId, "tasks", taskId), data)
+}
+
+export const changeIsCompletedTask = async (userId: string, taskId: string) :Promise<void>=> {
+  const taskSnap = await getDoc(doc(db, "users", userId, "tasks", taskId))
+
+  if(!taskSnap.exists()) return
+
+  const isCompletedTask: boolean = taskSnap.data()?.completed
+  await updateTask(userId, taskId, {completed: !isCompletedTask})
+
 }
