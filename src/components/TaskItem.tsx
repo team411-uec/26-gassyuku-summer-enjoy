@@ -156,7 +156,7 @@ export function TaskItem({
             }}
           >
             <h2
-              className={`m-0 text-left text-xl font-bold text-white ${
+              className={`m-0 text-left text-xl font-bold text-white break-all ${
                 task.completed ? "line-through" : ""
               }`}
             >

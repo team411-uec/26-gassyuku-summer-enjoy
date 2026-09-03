@@ -66,7 +66,8 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
         <div
           className="flex min-h-12 items-center justify-center bg-[#579bd9] px-12"
           style={{
-            clipPath: "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
+            clipPath:
+              "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%, 8% 50%)",
           }}
         >
           <p
@@ -96,7 +97,9 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             タイトル
-            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
+            <span className="ml-2 text-xs font-black text-orange-500">
+              REQUIRED
+            </span>
           </label>
 
           <input
@@ -118,7 +121,9 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             出発日
-            <span className="ml-2 text-xs font-black text-orange-500">REQUIRED</span>
+            <span className="ml-2 text-xs font-black text-orange-500">
+              REQUIRED
+            </span>
           </label>
 
           <div className="relative">
@@ -153,7 +158,9 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             style={{ fontSize: "14px" }}
           >
             旅のメモ
-            <span className="ml-2 text-xs font-medium text-slate-400">OPTIONAL</span>
+            <span className="ml-2 text-xs font-medium text-slate-400">
+              OPTIONAL
+            </span>
           </label>
 
           <textarea
@@ -174,7 +181,9 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             SUMMER TICKET OFFICE
           </p>
 
-          <p className="mt-1 text-sm text-slate-500">入力した内容で新しい切符を発行します。</p>
+          <p className="mt-1 text-sm text-slate-500">
+            入力した内容で新しい切符を発行します。
+          </p>
         </div>
 
         {error && (
@@ -192,6 +201,55 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           {isSubmitting ? "発行中…" : "夏の切符を発行"}
         </button>
       </div>
+
+      {/* 発行時に表示する大きなスタンプ */}
+      {isIssued && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-5 left-40 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:left-auto sm:right-[0px] sm:h-52 sm:w-52"
+          style={{
+            filter: "drop-shadow(3px 4px 0 rgba(63, 121, 148, 0.16))",
+          }}
+        >
+          {/* ギザギザした外周 */}
+          <div
+            className="absolute inset-0 bg-[#3f7894]"
+            style={{ clipPath: stampShape }}
+          >
+            {/* 中央を紙色で抜いて線だけに見せる */}
+            <div
+              className="absolute inset-[5px] bg-[#f7fbfd]"
+              style={{ clipPath: stampShape }}
+            />
+          </div>
+
+          {/* 内側の二重円 */}
+          <div className="absolute inset-[18px] flex flex-col items-center justify-center rounded-full border-[3px] border-[#3f7894] text-center sm:inset-[22px]">
+            <div className="absolute inset-[6px] rounded-full border-2 border-[#3f7894]" />
+
+            <span
+              className="relative leading-none"
+              style={{ fontSize: "clamp(28px, 5vw, 42px)" }}
+            >
+              ✈︎
+            </span>
+
+            <span
+              className="relative mt-2 font-black tracking-[0.12em]"
+              style={{ fontSize: "clamp(20px, 4vw, 28px)" }}
+            >
+              ISSUED
+            </span>
+
+            <span
+              className="relative mt-1 font-bold tracking-[0.15em]"
+              style={{ fontSize: "clamp(9px, 1.8vw, 13px)" }}
+            >
+              SUMMER 2026
+            </span>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
