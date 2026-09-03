@@ -52,6 +52,6 @@ export const changeIsCompletedTask = async (userId: string, taskId: string) :Pro
   if(!taskSnap.exists()) return
 
   const isCompletedTask: boolean = taskSnap.data()?.completed
-  updateTask(userId, taskId, {completed: !isCompletedTask})
+  await updateTask(userId, taskId, {completed: !isCompletedTask})
 
 }
