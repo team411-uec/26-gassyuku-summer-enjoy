@@ -3,12 +3,17 @@ import type { Task } from "../types"
 interface TaskItemProps {
   task: Task
   onToggle: (id: string, completed: boolean) => void
+  onEdit: (task: Task) => void
 }
 
 const stampShape =
   "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
 
-export function TaskItem({ task, onToggle }: TaskItemProps) {
+export function TaskItem({
+  task,
+  onToggle,
+  onEdit,
+}: TaskItemProps) {
   return (
     <li
       className={`relative overflow-hidden border shadow-[0_6px_16px_rgba(45,93,126,0.13)] transition duration-200 ${
@@ -17,7 +22,9 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
           : "border-sky-200 bg-[#fffefa] hover:-translate-y-0.5 hover:shadow-lg"
       }`}
     >
+      {/* 切符の左右にある半円 */}
       <div className="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
+
       <div className="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
 
       <div className="grid sm:grid-cols-[1fr_9.5rem]">
@@ -27,11 +34,23 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
               SUMMER TICKET
             </p>
 
-            <p className="font-mono text-xs text-slate-400">
-              {task.id.toUpperCase()}
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="font-mono text-xs text-slate-400">
+                {task.id.toUpperCase()}
+              </p>
+
+              {/* 編集フォームを開くボタン */}
+             <button
+                type="button"
+                onClick={() => onEdit(task)}
+                className="border-b border-[#579bd9] pb-0.5  font-mono text-[10px] font-black tracking-[0.14em] text-[#579bd9] transition hover:border-[#d79f00] hover:text-[#d79f00]"
+              >
+                EDIT
+              </button>
+            </div>
           </div>
 
+          {/* タスクタイトル */}
           <div
             className={`mb-4 flex min-h-12 items-center px-5 pr-12 text-white ${
               task.completed ? "bg-slate-400" : "bg-[#559bdd]"
@@ -50,6 +69,7 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
             </h2>
           </div>
 
+          {/* タスク説明 */}
           {task.description ? (
             <p
               className={`text-left leading-7 ${
@@ -67,9 +87,12 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
           )}
         </div>
 
+        {/* 日付と完了操作 */}
         <label
           className={`flex min-h-36 cursor-pointer items-center justify-between gap-4 border-t-2 border-dashed p-5 sm:flex-col sm:justify-start sm:border-l-2 sm:border-t-0 ${
-            task.completed ? "border-slate-300" : "border-sky-200"
+            task.completed
+              ? "border-slate-300"
+              : "border-sky-200"
           }`}
         >
           <div className="text-left sm:text-center">
@@ -85,7 +108,9 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
           <input
             type="checkbox"
             checked={task.completed}
-            onChange={(event) => onToggle(task.id, event.target.checked)}
+            onChange={(event) =>
+              onToggle(task.id, event.target.checked)
+            }
             aria-label={
               task.completed
                 ? `${task.title}の完了を取り消す`
@@ -121,7 +146,9 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
           <div className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full border-2 border-[#d79f00] text-center">
             <div className="absolute inset-[3px] rounded-full border border-[#d79f00]" />
 
-            <span className="relative text-sm leading-none">✈︎</span>
+            <span className="relative text-sm leading-none">
+              ✈︎
+            </span>
 
             <span className="relative mt-0.5 text-[10px] font-black tracking-wide">
               ENJOYED!
