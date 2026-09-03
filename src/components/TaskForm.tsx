@@ -192,7 +192,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
       {isIssued && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -bottom-5 left-60 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:right-8 sm:h-52 sm:w-52"
+          className="pointer-events-none absolute -bottom-5 left-40 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:left-auto sm:right-[0px] sm:h-52 sm:w-52" 
           style={{
             filter: "drop-shadow(3px 4px 0 rgba(63, 121, 148, 0.16))",
           }}
