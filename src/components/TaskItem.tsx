@@ -26,9 +26,22 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
       <div className="grid sm:grid-cols-[1fr_9.5rem]">
         <div className="min-w-0 p-5 sm:p-6">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <p className="font-mono text-xs font-bold tracking-[0.16em] text-[#559bdd]">
-              SUMMER TICKET
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="font-mono text-xs font-bold tracking-[0.16em] text-[#559bdd]">
+                SUMMER TICKET
+              </p>
+
+              {/* points を持たない古いタスクもあるため 0 で補う */}
+              <span
+                className={`whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-black tracking-wide ${
+                  task.completed
+                    ? "border-slate-300 text-slate-400"
+                    : "border-[#e6c56d] bg-[#fdf4de] text-[#b3820b]"
+                }`}
+              >
+                {task.points ?? 0} pt
+              </span>
+            </div>
 
             <div className="flex items-center gap-3">
               <p className="font-mono text-xs text-slate-400">{task.id.toUpperCase()}</p>
