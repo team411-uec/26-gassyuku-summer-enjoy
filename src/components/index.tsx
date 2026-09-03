@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Ichiran } from "./ichiran"
 import { TaskForm } from "./TaskForm"
+import { TaskUpdateForm } from "./TaskUpdateForm"
 import type { Task } from "../types"
 import { loginAnonymously } from "../lib/auth"
 import { addTask, getTasks, updateTask } from "../lib/tasks"
@@ -9,6 +10,7 @@ export const App = () => {
   const [tasks, setTasks] = useState<Task[]>([])
   const [userId, setUserId] = useState<string | null>(null)
   const [isTaskFormVisible, setIsTaskFormVisible] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
 
   useEffect(() => {
     async function loadTasks() {
@@ -37,6 +39,25 @@ export const App = () => {
     setTasks((currentTasks) => [...currentTasks, { ...newTask, id }])
   }
 
+  const handleUpdate = async (
+    taskId: string,
+    updatedFields: Partial<Omit<Task, "id">>,
+  ) => {
+    if (!userId) return
+
+    await updateTask(userId, taskId, updatedFields)
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId ? { ...task, ...updatedFields } : task,
+      ),
+    )
+    setEditingTask(null)
+  }
+
+  const closeUpdateForm = () => {
+    setEditingTask(null)
+  }
+
   const openTaskForm = () => {
     setIsTaskFormVisible(true)
   }
@@ -50,6 +71,7 @@ export const App = () => {
       <Ichiran
         tasks={tasks}
         onToggle={handleToggle}
+        onEdit={setEditingTask}
         onOpenTaskForm={openTaskForm}
       />
 
@@ -75,6 +97,30 @@ export const App = () => {
             </button>
 
             <TaskForm onSubmit={handleAddTask} />
+          </div>
+        </div>
+      )}
+
+      {editingTask && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${editingTask.title}の編集`}
+          onClick={closeUpdateForm}
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/45 px-4 py-8"
+        >
+          <div
+            className="relative w-full max-w-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+
+
+            <TaskUpdateForm
+              key={editingTask.id}
+              initialData={editingTask}
+              onSubmit={handleUpdate}
+              onCancel={closeUpdateForm}
+            />
           </div>
         </div>
       )}
