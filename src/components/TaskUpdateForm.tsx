@@ -11,6 +11,8 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
   const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description ?? "");
   const [date, setDate] = useState(initialData.date);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   /*
    * 別のタスクが渡されたとき、
@@ -22,11 +24,14 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
     setDate(initialData.date);
   }, [initialData.id, initialData.title, initialData.description, initialData.date]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (isSubmitting) return;
 
-    if (!title.trim() || !date) {
-      alert("タイトルと日付は必須です");
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
+    if (!trimmedTitle || !date) {
+      setError("タイトルと日付は必須です");
       return;
     }
 
@@ -34,11 +39,20 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
      * completedとpointsは変更しません。
      * このフォームで編集した項目だけを親へ渡します。
      */
-    onSubmit(initialData.id, {
-      title: title.trim(),
-      description: description.trim() || undefined,
-      date,
-    });
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await onSubmit(initialData.id, {
+        title: trimmedTitle,
+        description: trimmedDescription || undefined,
+        date,
+      });
+    } catch (submitError) {
+      console.error("タスクの更新に失敗しました", submitError);
+      setError("タスクを更新できませんでした。入力内容を確認して、もう一度お試しください。");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -135,6 +149,8 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
             type="text"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
+            required
+            aria-invalid={Boolean(error && !title.trim())}
             placeholder="例：海で泳ぐ"
             autoComplete="off"
             className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 text-base text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)]"
@@ -157,6 +173,7 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
+              required
               className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 pr-12 text-base text-slate-700 outline-none transition [color-scheme:light] focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:h-7 [&::-webkit-calendar-picker-indicator]:w-7 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
             />
 
@@ -209,6 +226,12 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
           <p className="mt-1 text-sm text-slate-500">内容を確認して、切符を再発行してください。</p>
         </div>
 
+        {error && (
+          <p role="alert" className="text-sm font-bold text-red-700">
+            {error}
+          </p>
+        )}
+
         <div className="flex flex-col gap-3 sm:flex-row">
           {/* キャンセル */}
 
@@ -225,10 +248,11 @@ export function TaskUpdateForm({ initialData, onSubmit, onCancel }: TaskUpdateFo
           {/* 更新 */}
           <button
             type="submit"
-            className="group relative cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-7 py-3 font-black text-white shadow-[3px_3px_0_#387ab5] transition hover:-translate-y-0.5 hover:bg-[#72afe3] hover:shadow-[4px_5px_0_#387ab5] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+            disabled={isSubmitting}
+            className="group relative cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-7 py-3 font-black text-white shadow-[3px_3px_0_#387ab5] transition hover:-translate-y-0.5 hover:bg-[#72afe3] hover:shadow-[4px_5px_0_#387ab5] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span className="mr-2 inline-block transition group-hover:rotate-180">↻</span>
-            変更した切符を再発行
+            {isSubmitting ? "更新中…" : "変更した切符を再発行"}
           </button>
         </div>
       </div>
