@@ -31,7 +31,9 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
             </p>
 
             <div className="flex items-center gap-3">
-              <p className="font-mono text-xs text-slate-400">{task.id.toUpperCase()}</p>
+              <p className="font-mono text-xs text-slate-400">
+                {task.id.toUpperCase()}
+              </p>
 
               {/* 編集フォームを開くボタン */}
               <button
@@ -54,7 +56,7 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
             }}
           >
             <h2
-              className={`m-0 text-left text-xl font-bold text-white ${
+              className={`m-0 text-left text-xl font-bold text-white break-all ${
                 task.completed ? "line-through" : ""
               }`}
             >
@@ -65,8 +67,10 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
           {/* タスク説明 */}
           {task.description ? (
             <p
-              className={`text-left leading-7 ${
-                task.completed ? "text-slate-500 line-through" : "text-slate-700"
+              className={`text-left leading-7 break-all whitespace-pre-wrap ${
+                task.completed
+                  ? "text-slate-500 line-through"
+                  : "text-slate-700"
               }`}
             >
               {task.description}
@@ -83,7 +87,9 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
           }`}
         >
           <div className="text-left sm:text-center">
-            <p className="text-xs font-bold tracking-wider text-slate-400">DEPARTURE</p>
+            <p className="text-xs font-bold tracking-wider text-slate-400">
+              DEPARTURE
+            </p>
 
             <p className="mt-1 whitespace-nowrap font-mono text-sm font-bold text-[#347fbd]">
               {task.date}
@@ -95,7 +101,9 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
             checked={task.completed}
             onChange={(event) => onToggle(task.id, event.target.checked)}
             aria-label={
-              task.completed ? `${task.title}の完了を取り消す` : `${task.title}を完了にする`
+              task.completed
+                ? `${task.title}の完了を取り消す`
+                : `${task.title}を完了にする`
             }
             className="h-7 w-7 cursor-pointer accent-[#f2bd00]"
           />
@@ -114,8 +122,14 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
           aria-hidden="true"
           className="pointer-events-none absolute bottom-2 right-0 z-20 h-28 w-28 -rotate-12 text-[#d79f00] sm:bottom-3 sm:right-4"
         >
-          <div className="absolute inset-0 bg-[#d79f00]" style={{ clipPath: stampShape }}>
-            <div className="absolute inset-[3px] bg-[#f0f2f2]" style={{ clipPath: stampShape }} />
+          <div
+            className="absolute inset-0 bg-[#d79f00]"
+            style={{ clipPath: stampShape }}
+          >
+            <div
+              className="absolute inset-[3px] bg-[#f0f2f2]"
+              style={{ clipPath: stampShape }}
+            />
           </div>
 
           <div className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full border-2 border-[#d79f00] text-center">
@@ -123,9 +137,13 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
 
             <span className="relative text-sm leading-none">✈︎</span>
 
-            <span className="relative mt-0.5 text-[10px] font-black tracking-wide">ENJOYED!</span>
+            <span className="relative mt-0.5 text-[10px] font-black tracking-wide">
+              ENJOYED!
+            </span>
 
-            <span className="relative text-[7px] font-bold tracking-wide">SUMMER 2026</span>
+            <span className="relative text-[7px] font-bold tracking-wide">
+              SUMMER 2026
+            </span>
           </div>
         </div>
       )}
