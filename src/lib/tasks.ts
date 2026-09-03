@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
   orderBy,
@@ -43,4 +44,11 @@ export async function updateTask(
   data: Partial<Omit<Task, "id">>,
 ): Promise<void> {
   await updateDoc(doc(db, "users", userId, "tasks", taskId), data)
+}
+
+export async function deleteTask(
+  userId: string,
+  taskId: string,
+): Promise<void> {
+  await deleteDoc(doc(db, "users", userId, "tasks", taskId))
 }
