@@ -7,7 +7,7 @@ import {
   orderBy,
   query,
   updateDoc,
-} from "firebase/firestore"
+} from "firebase/firestore/lite"
 import type { Task } from "../types"
 import { db } from "./firebase"
 
