@@ -1,12 +1,24 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Ichiran } from "./ichiran"
 import { TaskForm } from "./TaskForm"
-import { mockTasks } from "../mocks/tasks"
 import type { Task } from "../types"
+import { loginAnonymously } from "../lib/auth"
+import { addTask, getTasks, updateTask } from "../lib/tasks"
 
 export const App = () => {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks)
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [userId, setUserId] = useState<string | null>(null)
   const [isTaskFormVisible, setIsTaskFormVisible] = useState(false)
+
+  useEffect(() => {
+    async function loadTasks() {
+      const user = await loginAnonymously()
+      setUserId(user.uid)
+      setTasks(await getTasks(user.uid))
+    }
+
+    void loadTasks()
+  }, [])
 
   const handleToggle = (id: string, completed: boolean) => {
     setTasks((currentTasks) =>
@@ -14,15 +26,15 @@ export const App = () => {
         task.id === id ? { ...task, completed } : task,
       ),
     )
+
+    if (userId) void updateTask(userId, id, { completed })
   }
 
-  const handleAddTask = (newTask: Omit<Task, "id">) => {
-    const taskWithId: Task = {
-      ...newTask,
-      id: crypto.randomUUID(),
-    }
+  const handleAddTask = async (newTask: Omit<Task, "id">) => {
+    if (!userId) return
 
-    setTasks((currentTasks) => [...currentTasks, taskWithId])
+    const id = await addTask(userId, newTask)
+    setTasks((currentTasks) => [...currentTasks, { ...newTask, id }])
   }
 
   const openTaskForm = () => {
