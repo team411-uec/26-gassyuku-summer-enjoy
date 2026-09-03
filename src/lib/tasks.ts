@@ -49,9 +49,9 @@ export async function updateTask(
 export const changeIsCompletedTask = async (userId: string, taskId: string) :Promise<void>=> {
   const taskSnap = await getDoc(doc(db, "users", userId, "tasks", taskId))
 
-  if(taskSnap.exists()) return
-  
+  if(!taskSnap.exists()) return
+
   const isCompletedTask: boolean = taskSnap.data()?.completed
   updateTask(userId, taskId, {completed: !isCompletedTask})
-  
+
 }
