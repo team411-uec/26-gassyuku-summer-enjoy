@@ -1,47 +1,53 @@
 import type { Task } from "../types";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 interface TaskFormProps {
   /** points は AI が内容から見積もるため、フォームからは渡さない。 */
-  onSubmit: (task: Omit<Task, "id" | "points">) => void;
+  onSubmit: (task: Omit<Task, "id" | "points">) => void | Promise<void>;
 }
-
-const stampShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
 export function TaskForm({ onSubmit }: TaskFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-  const [isIssued, setIsIssued] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSubmitting) return;
+
+    const trimmedTitle = title.trim();
+    const trimmedDescription = description.trim();
+    if (!trimmedTitle || !date) {
+      setError("タイトルと日付は必須です");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await onSubmit({
+        title: trimmedTitle,
+        description: trimmedDescription || undefined,
+        date,
+        completed: false,
+      });
+
+      setTitle("");
+      setDescription("");
+      setDate("");
+    } catch (submitError) {
+      console.error("タスクの登録に失敗しました", submitError);
+      setError("タスクを登録できませんでした。入力内容を確認して、もう一度お試しください。");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <form
-      onSubmit={(event) => {
-        event.preventDefault();
-
-        if (!title || !date) {
-          alert("タイトルと日付は必須です");
-          return;
-        }
-
-        onSubmit({
-          title,
-          description: description || undefined,
-          date,
-          completed: false,
-        });
-
-        setIsIssued(true);
-
-        window.setTimeout(() => {
-          setIsIssued(false);
-        }, 3000);
-
-        setTitle("");
-        setDescription("");
-        setDate("");
-      }}
+      onSubmit={handleSubmit}
       className="relative overflow-hidden border-2 border-sky-200 bg-[#fffefa] shadow-[0_8px_22px_rgba(45,93,126,0.14)]"
     >
       {/* フォームの見出し */}
@@ -98,6 +104,8 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
             type="text"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
+            required
+            aria-invalid={Boolean(error && !title.trim())}
             placeholder="例：海で泳ぐ"
             className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 text-base text-slate-700 outline-none transition placeholder:text-slate-300 focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)]"
           />
@@ -119,6 +127,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
               type="date"
               value={date}
               onChange={(event) => setDate(event.target.value)}
+              required
               className="w-full border-2 border-sky-100 bg-[#f8fcff] px-4 py-3 pr-12 text-base text-slate-700 outline-none transition [color-scheme:light] focus:border-[#579bd9] focus:bg-white focus:shadow-[0_0_0_3px_rgba(87,155,217,0.12)] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-3 [&::-webkit-calendar-picker-indicator]:h-7 [&::-webkit-calendar-picker-indicator]:w-7 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0"
             />
 
@@ -168,54 +177,21 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
           <p className="mt-1 text-sm text-slate-500">入力した内容で新しい切符を発行します。</p>
         </div>
 
+        {error && (
+          <p role="alert" className="text-sm font-bold text-red-700">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="relative cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-7 py-3 font-black text-white shadow-[3px_3px_0_#387ab5] transition hover:-translate-y-0.5 hover:bg-[#72afe3] hover:shadow-[4px_5px_0_#387ab5] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+          disabled={isSubmitting}
+          className="relative cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-7 py-3 font-black text-white shadow-[3px_3px_0_#387ab5] transition hover:-translate-y-0.5 hover:bg-[#72afe3] hover:shadow-[4px_5px_0_#387ab5] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="mr-2">＋</span>
-          夏の切符を発行
+          {isSubmitting ? "発行中…" : "夏の切符を発行"}
         </button>
       </div>
-
-      {/* 発行時に表示する大きなスタンプ */}
-      {isIssued && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-5 left-40 z-30 h-44 w-44 -rotate-12 text-[#3f7894] sm:bottom-5 sm:left-auto sm:right-[0px] sm:h-52 sm:w-52"
-          style={{
-            filter: "drop-shadow(3px 4px 0 rgba(63, 121, 148, 0.16))",
-          }}
-        >
-          {/* ギザギザした外周 */}
-          <div className="absolute inset-0 bg-[#3f7894]" style={{ clipPath: stampShape }}>
-            {/* 中央を紙色で抜いて線だけに見せる */}
-            <div className="absolute inset-[5px] bg-[#f7fbfd]" style={{ clipPath: stampShape }} />
-          </div>
-
-          {/* 内側の二重円 */}
-          <div className="absolute inset-[18px] flex flex-col items-center justify-center rounded-full border-[3px] border-[#3f7894] text-center sm:inset-[22px]">
-            <div className="absolute inset-[6px] rounded-full border-2 border-[#3f7894]" />
-
-            <span className="relative leading-none" style={{ fontSize: "clamp(28px, 5vw, 42px)" }}>
-              ✈︎
-            </span>
-
-            <span
-              className="relative mt-2 font-black tracking-[0.12em]"
-              style={{ fontSize: "clamp(20px, 4vw, 28px)" }}
-            >
-              ISSUED
-            </span>
-
-            <span
-              className="relative mt-1 font-bold tracking-[0.15em]"
-              style={{ fontSize: "clamp(9px, 1.8vw, 13px)" }}
-            >
-              SUMMER 2026
-            </span>
-          </div>
-        </div>
-      )}
     </form>
   );
 }

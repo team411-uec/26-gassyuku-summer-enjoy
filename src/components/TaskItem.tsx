@@ -2,14 +2,16 @@ import type { Task } from "../types";
 
 interface TaskItemProps {
   task: Task;
-  onToggle: (id: string, completed: boolean) => void;
+  onToggle: (id: string, completed: boolean) => void | Promise<void>;
   onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void | Promise<void>;
+  isPending: boolean;
 }
 
 const stampShape =
   "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
-export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
+export function TaskItem({ task, onToggle, onEdit, onDelete, isPending }: TaskItemProps) {
   return (
     <li
       className={`relative overflow-hidden border shadow-[0_6px_16px_rgba(45,93,126,0.13)] transition duration-200 ${
@@ -50,9 +52,22 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
               <button
                 type="button"
                 onClick={() => onEdit(task)}
-                className="border-b border-[#579bd9] pb-0.5  font-mono text-[10px] font-black tracking-[0.14em] text-[#579bd9] transition hover:border-[#d79f00] hover:text-[#d79f00]"
+                disabled={isPending}
+                className="border-b border-[#579bd9] pb-0.5 font-mono text-[10px] font-black tracking-[0.14em] text-[#579bd9] transition hover:border-[#d79f00] hover:text-[#d79f00] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 EDIT
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm(`「${task.title}」を削除しますか？`)) void onDelete(task);
+                }}
+                disabled={isPending}
+                aria-label={`${task.title}を削除`}
+                className="border-b border-red-300 pb-0.5 font-mono text-[10px] font-black tracking-[0.14em] text-red-400 transition hover:border-red-600 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                DELETE
               </button>
             </div>
           </div>
@@ -107,10 +122,11 @@ export function TaskItem({ task, onToggle, onEdit }: TaskItemProps) {
             type="checkbox"
             checked={task.completed}
             onChange={(event) => onToggle(task.id, event.target.checked)}
+            disabled={isPending}
             aria-label={
               task.completed ? `${task.title}の完了を取り消す` : `${task.title}を完了にする`
             }
-            className="h-7 w-7 cursor-pointer accent-[#f2bd00]"
+            className="h-7 w-7 cursor-pointer accent-[#f2bd00] disabled:cursor-not-allowed disabled:opacity-50"
           />
 
           {!task.completed && (

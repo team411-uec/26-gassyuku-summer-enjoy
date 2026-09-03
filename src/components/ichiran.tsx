@@ -1,17 +1,37 @@
 import { TaskList } from "./TaskList";
 import type { Task } from "../types";
+import type { ReactNode } from "react";
 
 interface IchiranProps {
   tasks: Task[];
-  onToggle: (id: string, completed: boolean) => void;
+  onToggle: (id: string, completed: boolean) => void | Promise<void>;
   onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void | Promise<void>;
+  pendingTaskIds: Set<string>;
+  isLoading: boolean;
+  loadError: string | null;
+  onRetry: () => void;
+  feedback: string | null;
   onOpenTaskForm: () => void;
+  children?: ReactNode;
 }
 
 const stickerShape =
   "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
 
-export function Ichiran({ tasks, onToggle, onEdit, onOpenTaskForm }: IchiranProps) {
+export function Ichiran({
+  tasks,
+  onToggle,
+  onEdit,
+  onDelete,
+  pendingTaskIds,
+  isLoading,
+  loadError,
+  onRetry,
+  feedback,
+  onOpenTaskForm,
+  children,
+}: IchiranProps) {
   return (
     <main className="min-h-screen bg-[#eaf7fb] px-3 py-6 text-left sm:px-6">
       <div className="mx-auto max-w-3xl overflow-hidden bg-[#fffaf3] shadow-2xl">
@@ -161,7 +181,8 @@ export function Ichiran({ tasks, onToggle, onEdit, onOpenTaskForm }: IchiranProp
             <button
               type="button"
               onClick={onOpenTaskForm}
-              className="group relative min-w-52 cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-5 py-3 text-left text-white shadow-[4px_4px_0_#387ab5] transition hover:-translate-y-1 hover:bg-[#67a7df] hover:shadow-[5px_6px_0_#387ab5] active:translate-x-1 active:translate-y-1 active:shadow-none"
+              disabled={isLoading || Boolean(loadError)}
+              className="group relative min-w-52 cursor-pointer overflow-hidden border-2 border-[#387ab5] bg-[#579bd9] px-5 py-3 text-left text-white shadow-[4px_4px_0_#387ab5] transition hover:-translate-y-1 hover:bg-[#67a7df] hover:shadow-[5px_6px_0_#387ab5] active:translate-x-1 active:translate-y-1 active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="absolute -left-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-[#fffaf3]" />
               <span className="absolute -right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-[#fffaf3]" />
@@ -183,7 +204,47 @@ export function Ichiran({ tasks, onToggle, onEdit, onOpenTaskForm }: IchiranProp
             </button>
           </div>
 
-          <TaskList tasks={tasks} onToggle={onToggle} onEdit={onEdit} />
+          {feedback && (
+            <p
+              role="alert"
+              className="mb-5 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            >
+              {feedback}
+            </p>
+          )}
+
+          {isLoading ? (
+            <div
+              role="status"
+              className="border-2 border-dashed border-sky-300 bg-[#fffdf8] p-10 text-center shadow-sm"
+            >
+              <p className="text-lg font-bold text-[#3986c7]">タスクを読み込んでいます…</p>
+            </div>
+          ) : loadError ? (
+            <div
+              role="alert"
+              className="border-2 border-dashed border-red-300 bg-[#fffdf8] p-10 text-center shadow-sm"
+            >
+              <p className="text-lg font-bold text-red-700">{loadError}</p>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="mt-4 border-2 border-[#387ab5] bg-[#579bd9] px-5 py-2 font-bold text-white transition hover:bg-[#67a7df]"
+              >
+                再読み込み
+              </button>
+            </div>
+          ) : (
+            <TaskList
+              tasks={tasks.filter((task) => !task.completed)}
+              onToggle={onToggle}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              pendingTaskIds={pendingTaskIds}
+            />
+          )}
+
+          {!isLoading && !loadError && children}
         </section>
       </div>
     </main>
