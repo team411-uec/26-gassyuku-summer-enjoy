@@ -5,6 +5,9 @@ interface TaskItemProps {
   onToggle: (id: string, completed: boolean) => void
 }
 
+const stampShape =
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
+
 export function TaskItem({ task, onToggle }: TaskItemProps) {
   return (
     <li
@@ -29,7 +32,6 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
             </p>
           </div>
 
-          {/* 上下の高さは一定で、右端だけV字に切り込む */}
           <div
             className={`mb-4 flex min-h-12 items-center px-5 pr-12 text-white ${
               task.completed ? "bg-slate-400" : "bg-[#559bdd]"
@@ -66,7 +68,7 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
         </div>
 
         <label
-          className={`flex cursor-pointer items-center justify-between gap-4 border-t-2 border-dashed p-5 sm:flex-col sm:justify-center sm:border-l-2 sm:border-t-0 ${
+          className={`flex min-h-36 cursor-pointer items-center justify-between gap-4 border-t-2 border-dashed p-5 sm:flex-col sm:justify-start sm:border-l-2 sm:border-t-0 ${
             task.completed ? "border-slate-300" : "border-sky-200"
           }`}
         >
@@ -92,17 +94,45 @@ export function TaskItem({ task, onToggle }: TaskItemProps) {
             className="h-7 w-7 cursor-pointer accent-[#f2bd00]"
           />
 
-          <span
-            className={`rounded-full border-2 px-3 py-1 text-xs font-black ${
-              task.completed
-                ? "rotate-[-6deg] border-[#e4ae00] text-[#d79f00]"
-                : "border-sky-300 text-[#559bdd]"
-            }`}
-          >
-            {task.completed ? "ENJOYED!" : "READY"}
-          </span>
+          {!task.completed && (
+            <span className="rounded-full border-2 border-sky-300 px-3 py-1 text-xs font-black text-[#559bdd]">
+              READY
+            </span>
+          )}
         </label>
       </div>
+
+      {/* 完了済みの旅行スタンプ */}
+      {task.completed && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute bottom-2 right-0 z-20 h-28 w-28 -rotate-12 text-[#d79f00] sm:bottom-3 sm:right-4"
+        >
+          <div
+            className="absolute inset-0 bg-[#d79f00]"
+            style={{ clipPath: stampShape }}
+          >
+            <div
+              className="absolute inset-[3px] bg-[#f0f2f2]"
+              style={{ clipPath: stampShape }}
+            />
+          </div>
+
+          <div className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full border-2 border-[#d79f00] text-center">
+            <div className="absolute inset-[3px] rounded-full border border-[#d79f00]" />
+
+            <span className="relative text-sm leading-none">✈︎</span>
+
+            <span className="relative mt-0.5 text-[10px] font-black tracking-wide">
+              ENJOYED!
+            </span>
+
+            <span className="relative text-[7px] font-bold tracking-wide">
+              SUMMER 2026
+            </span>
+          </div>
+        </div>
+      )}
     </li>
   )
 }
