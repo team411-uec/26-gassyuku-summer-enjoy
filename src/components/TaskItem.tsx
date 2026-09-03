@@ -1,67 +1,140 @@
-import type { Task } from "../types";
+import type { Task } from "../types"
 
 interface TaskItemProps {
-  task: Task;
-  onToggle: (id: string, completed: boolean) => void | Promise<void>;
-  onEdit: (task: Task) => void;
-  onDelete: (task: Task) => void | Promise<void>;
-  isPending: boolean;
+  task: Task
+  onToggle: (id: string, completed: boolean) => void | Promise<void>
+  onEdit: (task: Task) => void
+  onDelete: (task: Task) => void | Promise<void>
+  isPending: boolean
 }
 
 const stampShape =
-  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)";
+  "polygon(50% 0%, 61.4% 7.5%, 75% 6.7%, 81.1% 18.9%, 93.3% 25%, 92.5% 38.6%, 100% 50%, 92.5% 61.4%, 93.3% 75%, 81.1% 81.1%, 75% 93.3%, 61.4% 92.5%, 50% 100%, 38.6% 92.5%, 25% 93.3%, 18.9% 81.1%, 6.7% 75%, 7.5% 61.4%, 0% 50%, 7.5% 38.6%, 6.7% 25%, 18.9% 18.9%, 25% 6.7%, 38.6% 7.5%)"
 
-export function TaskItem({ task, onToggle, onEdit, onDelete, isPending }: TaskItemProps) {
+export function TaskItem({
+  task,
+  onToggle,
+  onEdit,
+  onDelete,
+  isPending,
+}: TaskItemProps) {
   return (
     <li
-      className={`relative overflow-hidden border shadow-[0_6px_16px_rgba(45,93,126,0.13)] transition duration-200 ${
+      className={`relative transition duration-500 ${
         task.completed
-          ? "border-slate-300 bg-[#f0f2f2]"
-          : "border-sky-200 bg-[#fffefa] hover:-translate-y-0.5 hover:shadow-lg"
+          ? "overflow-visible border border-transparent bg-transparent"
+          : "overflow-hidden border border-sky-200 bg-[#fffaf3] shadow-[0_6px_16px_rgba(45,93,126,0.13)] hover:-translate-y-0.5 hover:shadow-lg"
       }`}
     >
-      {/* 切符の左右にある半円 */}
-      <div className="absolute -left-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
+      {/* 未完了のときだけ表示する切符の半円 */}
+      {!task.completed && (
+        <>
+          <div className="absolute -left-3 top-1/2 z-30 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
 
-      <div className="absolute -right-3 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
+          <div className="absolute -right-3 top-1/2 z-30 h-6 w-6 -translate-y-1/2 rounded-full border border-sky-200 bg-[#fffaf3]" />
+        </>
+      )}
 
-      <div className="grid sm:grid-cols-[1fr_9.5rem]">
-        <div className="min-w-0 p-5 sm:p-6">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+      {/* 完了すると本体と半券の間が開く */}
+      <div
+        className={`grid transition-all duration-500 sm:grid-cols-[1fr_9.5rem] ${
+          task.completed ? "gap-5" : "gap-0"
+        }`}
+      >
+        {/* チケット本体 */}
+        <div
+          className={`relative min-w-0 p-5 transition-all duration-500 sm:p-6 ${
+            task.completed
+              ? "border-x border-t border-slate-300 bg-[#f0f2f2] shadow-[0_5px_12px_rgba(60,70,80,0.10)] sm:border-y sm:border-l sm:border-r-0"
+              : "bg-[#fffefa]"
+          }`}
+        >
+          {/* スマホ：本体側のちぎれ目 */}
+          {task.completed && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-2 left-0 z-10 h-3 w-full bg-[#f0f2f2] sm:hidden"
+              style={{
+                clipPath:
+                  "polygon(0 0, 100% 0, 100% 45%, 95% 100%, 90% 45%, 85% 100%, 80% 45%, 75% 100%, 70% 45%, 65% 100%, 60% 45%, 55% 100%, 50% 45%, 45% 100%, 40% 45%, 35% 100%, 30% 45%, 25% 100%, 20% 45%, 15% 100%, 10% 45%, 5% 100%, 0 45%)",
+              }}
+            />
+          )}
+          {/* PC：本体側のちぎれ目 */}
+          {task.completed && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-2 top-0 z-10 hidden h-full w-3 bg-[#f0f2f2] sm:block"
+              style={{
+                clipPath:
+                  "polygon(0 0, 55% 0, 100% 5%, 55% 10%, 100% 15%, 55% 20%, 100% 25%, 55% 30%, 100% 35%, 55% 40%, 100% 45%, 55% 50%, 100% 55%, 55% 60%, 100% 65%, 55% 70%, 100% 75%, 55% 80%, 100% 85%, 55% 90%, 100% 95%, 55% 100%, 0 100%)",
+              }}
+            />
+          )}
+
+          {/* チケット情報と編集ボタン */}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="min-w-0">
               <p className="font-mono text-xs font-bold tracking-[0.16em] text-[#559bdd]">
                 SUMMER TICKET
               </p>
 
-              {/* points を持たない古いタスクもあるため 0 で補う */}
-              <span
-                className={`whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-black tracking-wide ${
-                  task.completed
-                    ? "border-slate-300 text-slate-400"
-                    : "border-[#e6c56d] bg-[#fdf4de] text-[#b3820b]"
-                }`}
-              >
-                {task.points ?? 0} pt
-              </span>
+              <div className="mt-1 flex items-center gap-2">
+                <p className="truncate font-mono text-[10px] text-slate-400">
+                  {task.id.toUpperCase()}
+                </p>
+
+                <span
+                  className={`whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-black tracking-wide ${
+                    task.completed
+                      ? "border-slate-300 text-slate-400"
+                      : "border-[#e6c56d] bg-[#fdf4de] text-[#b3820b]"
+                  }`}
+                >
+                  {task.points ?? 0} pt
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <p className="font-mono text-xs text-slate-400">{task.id.toUpperCase()}</p>
-
-              {/* 編集フォームを開くボタン */}
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              {/* 完了後も表示するバーコード型編集ボタン */}
               <button
                 type="button"
-                onClick={() => onEdit(task)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onEdit(task)
+                }}
                 disabled={isPending}
-                className="border-b border-[#579bd9] pb-0.5 font-mono text-[10px] font-black tracking-[0.14em] text-[#579bd9] transition hover:border-[#d79f00] hover:text-[#d79f00] disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label={`${task.title}を編集する`}
+                className="group relative h-12 w-36 cursor-pointer overflow-hidden bg-transparent transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#579bd9] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                EDIT
+                {/* EDITの下に敷くバーコード */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 opacity-35 transition duration-200 group-hover:scale-x-105 group-hover:opacity-50"
+                  style={{
+                    backgroundImage:
+                      "repeating-linear-gradient(90deg, #475569 0 1px, transparent 1px 3px, #475569 3px 6px, transparent 6px 8px, #475569 8px 9px, transparent 9px 12px)",
+                  }}
+                />
+
+                {/* 大きなEDIT文字 */}
+                <span
+                  className="absolute inset-0 flex items-center justify-center font-serif text-[30px] font-black tracking-wide text-white transition"
+                  style={{
+                    textShadow:
+                      "1px 1px 0 #0673f0, -1px -1px 0 #ebeef1, 1px -1px 0 #0d82f7, -1px 1px 0 #097bec",
+                  }}
+                >
+                  Edit
+                </span>
               </button>
 
               <button
                 type="button"
-                onClick={() => {
-                  if (window.confirm(`「${task.title}」を削除しますか？`)) void onDelete(task);
+                onClick={(event) => {
+                  event.stopPropagation()
+                  if (window.confirm(`「${task.title}」を削除しますか？`)) void onDelete(task)
                 }}
                 disabled={isPending}
                 aria-label={`${task.title}を削除`}
@@ -72,13 +145,14 @@ export function TaskItem({ task, onToggle, onEdit, onDelete, isPending }: TaskIt
             </div>
           </div>
 
-          {/* タスクタイトル */}
+          {/* タスクタイトルの帯 */}
           <div
             className={`mb-4 flex min-h-12 items-center px-5 pr-12 text-white ${
               task.completed ? "bg-slate-400" : "bg-[#559bdd]"
             }`}
             style={{
-              clipPath: "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%)",
+              clipPath:
+                "polygon(0 0, 100% 0, 92% 50%, 100% 100%, 0 100%)",
             }}
           >
             <h2
@@ -90,74 +164,132 @@ export function TaskItem({ task, onToggle, onEdit, onDelete, isPending }: TaskIt
             </h2>
           </div>
 
-          {/* タスク説明 */}
+          {/* タスクの説明 */}
           {task.description ? (
             <p
               className={`text-left leading-7 ${
-                task.completed ? "text-slate-500 line-through" : "text-slate-700"
+                task.completed
+                  ? "text-slate-500 line-through"
+                  : "text-slate-700"
               }`}
             >
               {task.description}
             </p>
           ) : (
-            <p className="text-left text-sm text-slate-400">説明はありません</p>
+            <p className="text-left text-sm text-slate-400">
+              説明はありません
+            </p>
           )}
         </div>
 
-        {/* 日付と完了操作 */}
+        {/* 点線より右側・スマホでは下側の半券 */}
         <label
-          className={`flex min-h-36 cursor-pointer items-center justify-between gap-4 border-t-2 border-dashed p-5 sm:flex-col sm:justify-start sm:border-l-2 sm:border-t-0 ${
-            task.completed ? "border-slate-300" : "border-sky-200"
+          title={
+            task.completed
+              ? "クリックして未完了に戻す"
+              : "クリックして完了にする"
+          }
+          className={`relative flex min-h-44 cursor-pointer items-center justify-between gap-4 p-5 transition-all duration-500 sm:flex-col sm:items-start sm:justify-start ${
+            task.completed
+              ? "origin-top-left translate-y-1.5 rotate-[1.5deg] border-x border-b border-slate-300 bg-[#f0f2f2] shadow-[0_5px_12px_rgba(60,70,80,0.12)] sm:translate-x-1.5 sm:translate-y-1 sm:rotate-[2deg] sm:border-y sm:border-r sm:border-l-0"
+              : "border-t-2 border-dashed border-sky-200 bg-[#fffefa] sm:border-l-2 sm:border-t-0"
           }`}
         >
-          <div className="text-left sm:text-center">
-            <p className="text-xs font-bold tracking-wider text-slate-400">DEPARTURE</p>
+          {/* スマホ：半券側のちぎれ目 */}
+          {task.completed && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-2 left-0 z-10 h-3 w-full bg-[#f0f2f2] sm:hidden"
+              style={{
+                clipPath:
+                  "polygon(0 100%, 0 55%, 5% 0, 10% 55%, 15% 0, 20% 55%, 25% 0, 30% 55%, 35% 0, 40% 55%, 45% 0, 50% 55%, 55% 0, 60% 55%, 65% 0, 70% 55%, 75% 0, 80% 55%, 85% 0, 90% 55%, 95% 0, 100% 55%, 100% 100%)",
+              }}
+            />
+          )}
+
+          {/* PC：半券側のちぎれ目 */}
+          {task.completed && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-2 top-0 z-10 hidden h-full w-3 bg-[#f0f2f2] sm:block"
+              style={{
+                clipPath:
+                  "polygon(100% 0, 55% 0, 0 5%, 55% 10%, 0 15%, 55% 20%, 0 25%, 55% 30%, 0 35%, 55% 40%, 0 45%, 55% 50%, 0 55%, 55% 60%, 0 65%, 55% 70%, 0 75%, 55% 80%, 0 85%, 55% 90%, 0 95%, 55% 100%, 100% 100%)",
+              }}
+            />
+          )}
+
+          {/* 表示されないチェックボックス */}
+          <input
+            type="checkbox"
+            checked={task.completed}
+            onChange={(event) =>
+              onToggle(task.id, event.target.checked)
+            }
+            disabled={isPending}
+            aria-label={
+              task.completed
+                ? `${task.title}を未完了に戻す`
+                : `${task.title}を完了にする`
+            }
+            className="sr-only"
+          />
+
+          {/* 出発日 */}
+          <div className="relative z-20 text-left">
+            <p className="text-xs font-bold tracking-wider text-slate-400">
+              DEPARTURE
+            </p>
 
             <p className="mt-1 whitespace-nowrap font-mono text-sm font-bold text-[#347fbd]">
               {task.date}
             </p>
           </div>
 
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={(event) => onToggle(task.id, event.target.checked)}
-            disabled={isPending}
-            aria-label={
-              task.completed ? `${task.title}の完了を取り消す` : `${task.title}を完了にする`
-            }
-            className="h-7 w-7 cursor-pointer accent-[#f2bd00] disabled:cursor-not-allowed disabled:opacity-50"
-          />
-
+          {/* 未完了のときだけ表示 */}
           {!task.completed && (
-            <span className="rounded-full border-2 border-sky-300 px-3 py-1 text-xs font-black text-[#559bdd]">
+            <span className="rounded-full border-2 border-sky-300 px-3 py-1 text-xs font-black text-[#559bdd] sm:self-center">
               READY
             </span>
           )}
+
+          {/* 完了したときの旅行スタンプ */}
+          {task.completed && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-2 right-5 z-30 h-24 w-24 -rotate-12 sm:bottom-3 sm:right-4"
+            >
+              {/* ギザギザしたスタンプの外周 */}
+              <div
+                className="absolute inset-0 bg-[#d79f00]"
+                style={{ clipPath: stampShape }}
+              >
+                <div
+                  className="absolute inset-[3px] bg-[#f0f2f2]"
+                  style={{ clipPath: stampShape }}
+                />
+              </div>
+
+              {/* スタンプの内側 */}
+              <div className="absolute inset-[8px] flex flex-col items-center justify-center rounded-full border-2 border-[#d79f00] text-center text-[#d79f00]">
+                <div className="absolute inset-[3px] rounded-full border border-[#d79f00]" />
+
+                <span className="relative text-sm leading-none">
+                  ✈︎
+                </span>
+
+                <span className="relative mt-0.5 text-[10px] font-black tracking-wide">
+                  ENJOYED!
+                </span>
+
+                <span className="relative text-[7px] font-bold tracking-wide">
+                  SUMMER 2026
+                </span>
+              </div>
+            </div>
+          )}
         </label>
       </div>
-
-      {/* 完了済みの旅行スタンプ */}
-      {task.completed && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute bottom-2 right-0 z-20 h-28 w-28 -rotate-12 text-[#d79f00] sm:bottom-3 sm:right-4"
-        >
-          <div className="absolute inset-0 bg-[#d79f00]" style={{ clipPath: stampShape }}>
-            <div className="absolute inset-[3px] bg-[#f0f2f2]" style={{ clipPath: stampShape }} />
-          </div>
-
-          <div className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full border-2 border-[#d79f00] text-center">
-            <div className="absolute inset-[3px] rounded-full border border-[#d79f00]" />
-
-            <span className="relative text-sm leading-none">✈︎</span>
-
-            <span className="relative mt-0.5 text-[10px] font-black tracking-wide">ENJOYED!</span>
-
-            <span className="relative text-[7px] font-bold tracking-wide">SUMMER 2026</span>
-          </div>
-        </div>
-      )}
     </li>
-  );
+  )
 }
